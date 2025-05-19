@@ -1,0 +1,39 @@
+.language {
+  position: absolute;
+  top: 5vh;
+  right: 5vw;
+
+  width: 5vw;
+  height: 2.5vw;
+  background-color: #282828;
+
+  border-radius: 2vw;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+
+  font-size: 1vw;
+  font-weight: 600;
+}
+
+.flag {
+  width: 2vw;
+  height: 2vw;
+  border-radius: 50%;
+  background-color: white;
+  margin-left: -0.5vw;
+}
+
+p {
+  margin-left: -1vw;
+}
+
+.pl {
+  position: relative;
+  top: 1vw;
+  width: 2vw;
+  height: 1vw;
+  background-color: red;
+  border-radius: 0 0 1vw 1vw;
+}

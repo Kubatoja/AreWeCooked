@@ -1,0 +1,55 @@
+.logo {
+  width: 25vw;
+  height: 25vw;
+  position: relative;
+  top: 2vh;
+  background-image: url("../img/AreWeCooked.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.buttonContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  width: 100%;
+  height: 50vh;
+
+  gap: 7vh;
+
+  font-weight: 600;
+}
+.button {
+  width: 17vw;
+  height: 4vw;
+  background-color: #cd16ca;
+  border-radius: 0.5vw;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  transition: 0.2s;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  .buttonInside {
+    border-radius: 0.5vw;
+
+    width: 90%;
+    height: 70%;
+    font-size: 1.5vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: white;
+    background-color: #9f139d;
+  }
+}

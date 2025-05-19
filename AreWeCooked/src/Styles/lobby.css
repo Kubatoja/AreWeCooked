@@ -1,0 +1,107 @@
+.logoCorner {
+  background-image: url("../img/AreWeCooked.png");
+  position: absolute;
+
+  top: 0vh;
+  left: 0vw;
+
+  width: 10vw;
+  height: 10vw;
+
+  background-position: center;
+  background-size: contain;
+
+  transition: 0.2s;
+  &:hover {
+    transform: scale(1.05);
+    cursor: pointer;
+  }
+}
+
+.Lobby {
+  width: 100vw;
+  height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  flex-direction: column;
+}
+
+.lobbyIDText {
+  width: 12vw;
+  height: 19vh;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  flex-direction: column;
+  background-color: #cd16ca;
+  position: relative;
+  top: -8vh;
+  border-radius: 1vw;
+  p {
+    font-size: 1.2vw;
+    font-weight: 600;
+  }
+  .lobbyID {
+    width: 10vw;
+    height: 12vh;
+    margin-bottom: 2vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #9f139d;
+    border-radius: 0.5vw;
+    font-size: 1.8vw;
+    font-weight: 600;
+  }
+}
+
+.players {
+  width: 45%;
+  height: 20vh;
+
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 2vw;
+}
+
+.player {
+  align-self: center;
+  justify-self: center;
+  width: 12vw;
+  height: 8vh;
+  background-color: #cd16ca;
+  border-radius: 1vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1vw;
+  font-weight: 600;
+
+  .playerName {
+    width: 90%;
+    height: 75%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #9f139d;
+    border-radius: 0.5vw;
+    font-size: 1.2vw;
+    font-weight: 500;
+  }
+}
+
+.hostTag {
+  width: 4vw;
+  height: 3vw;
+  background-image: url("../img/crown.png");
+  background-position: center;
+  background-size: 100%;
+  background-repeat: no-repeat;
+  position: absolute;
+  margin-top: -5vw;
+  margin-left: -11.5vw;
+  transform: rotate(-30deg);
+}
