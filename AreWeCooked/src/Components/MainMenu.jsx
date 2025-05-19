@@ -1,5 +1,5 @@
 import React from "react";
-import "../Styles/mainMenu.css";
+import "../Styles/mainmenu.css";
 
 function MainMenu({ setGameState, setLobbyId, setIsHost }) {
   function generateLobbyId() {
