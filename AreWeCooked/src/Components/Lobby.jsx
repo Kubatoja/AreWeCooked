@@ -30,8 +30,22 @@ function Lobby({
   useEffect(() => {
     if (isHost) {
       setPlayers([{ id: "host", name: PlayerName, isHost: true }]);
-      const peerInstance = new Peer(lobbyId);
-      setPeer(peerInstance);
+      const peerInstance = new Peer(lobbyId, {
+        host: "0.peerjs.com",
+        port: 443,
+        secure: true,
+        config: {
+          iceServers: [
+            { urls: "stun:stun.l.google.com:19302" },
+            { urls: "stun:stun1.l.google.com:19302" },
+            {
+              urls: "turn:numb.viagenie.ca:3478",
+              username: "free",
+              credential: "free",
+            },
+          ],
+        },
+      });
 
       peerInstance.on("connection", (conn) => {
         conn.on("data", (data) => {
@@ -45,6 +59,7 @@ function Lobby({
         });
       });
 
+      setPeer(peerInstance);
       return () => {
         peerInstance.destroy();
       };

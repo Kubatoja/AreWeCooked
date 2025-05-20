@@ -22,22 +22,33 @@ function Connect({
     if (!inputLobby || isConnecting) return;
     setIsConnecting(true);
 
-    const peerInstance = new Peer();
+    const peerInstance = new Peer({
+      host: "0.peerjs.com",
+      port: 443,
+      secure: true,
+      config: {
+        iceServers: [
+          { urls: "stun:stun.l.google.com:19302" },
+          { urls: "stun:stun1.l.google.com:19302" },
+          {
+            urls: "turn:numb.viagenie.ca:3478",
+            username: "free",
+            credential: "free",
+          },
+        ],
+      },
+    });
 
     peerInstance.on("open", (id) => {
-      console.log("Mój Peer ID:", id);
-      const conn = peerInstance.connect(inputLobby);
+      const conn = peerInstance.connect(inputLobby, {
+        reliable: true, // Lepsza niezawodność
+      });
 
       conn.on("open", () => {
         console.log("Połączenie z hostem otwarte!");
         conn.send({ type: "player-joined", PlayerName: PlayerName });
         setLobbyId(inputLobby);
         setGameState("lobby");
-      });
-
-      conn.on("error", (err) => {
-        console.error("Błąd połączenia:", err);
-        setIsConnecting(false);
       });
     });
 
