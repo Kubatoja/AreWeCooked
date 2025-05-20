@@ -34,16 +34,18 @@ function Lobby({
         host: "0.peerjs.com",
         port: 443,
         secure: true,
+        pingInterval: 5000, // Częstsze pingi
         config: {
           iceServers: [
+            { urls: "stun:stun.relay.metered.ca:80" }, // Bardziej niezawodny STUN
             { urls: "stun:stun.l.google.com:19302" },
-            { urls: "stun:stun1.l.google.com:19302" },
             {
-              urls: "turn:numb.viagenie.ca:3478",
-              username: "free",
-              credential: "free",
+              urls: "turn:a.relay.metered.ca:443",
+              username: "14b3f408a14d5e03d1b374bb", // DARMOWE konto (limit 50 GB/miesiąc)
+              credential: "7GZq87m80VnXQfYj",
             },
           ],
+          iceTransportPolicy: "relay", // Próbuj zarówno P2P jak i TURN
         },
       });
 
