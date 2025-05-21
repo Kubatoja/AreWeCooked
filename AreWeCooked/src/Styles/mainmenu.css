@@ -26,7 +26,7 @@
   width: 17vw;
   height: 4vw;
   background-color: #cd16ca;
-  border-radius: 0.5vw;
+  border-radius: 0.89vw;
 
   display: flex;
   align-items: center;
@@ -40,10 +40,10 @@
   }
 
   .buttonInside {
-    border-radius: 0.5vw;
+    border-radius: 0.6vw;
 
-    width: 90%;
-    height: 70%;
+    width: 95%;
+    height: 75%;
     font-size: 1.5vw;
     display: flex;
     align-items: center;

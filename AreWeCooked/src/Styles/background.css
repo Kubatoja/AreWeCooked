@@ -17,8 +17,8 @@
 }
 
 .rotating-background {
-  width: 220%;
-  height: 220%;
+  width: 220vh;
+  height: 220vh;
 
   /* object-fit: cover; */
   animation: spin 60s linear infinite;

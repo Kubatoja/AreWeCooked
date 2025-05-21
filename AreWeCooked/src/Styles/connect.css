@@ -24,7 +24,7 @@
 }
 .lobbyIDInput {
   z-index: 111;
-  width: 16vw;
+  width: 15.5vw;
   height: 3vw;
   border-radius: 0.5vw;
 
@@ -51,7 +51,7 @@
   border-radius: 0.5vw;
   background-color: #45ad00;
 
-  font-size: 4vw;
+  font-size: 2.5vw;
   text-align: center;
 
   display: flex;

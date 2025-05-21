@@ -57,6 +57,7 @@ function MainMenu({
           <div
             className="buttonInside"
             onClick={() => {
+              setIsHost(false);
               setGameState("connect");
             }}
           >

@@ -81,13 +81,13 @@
   font-weight: 600;
 
   .playerName {
-    width: 90%;
-    height: 75%;
+    width: 92%;
+    height: 80%;
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: #9f139d;
-    border-radius: 0.5vw;
+    border-radius: 0.6vw;
     font-size: 1.2vw;
     font-weight: 500;
   }
