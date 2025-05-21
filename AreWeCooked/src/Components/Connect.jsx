@@ -2,64 +2,55 @@ import React, { use, useEffect } from "react";
 import "../Styles/connect.css";
 import { IoMdCheckmark } from "react-icons/io";
 import { useState } from "react";
-import Peer from "peerjs";
+import { ref, update, get, off } from "firebase/database";
+import { db } from "./firebase";
 
 function Connect({
   setGameState,
   setLobbyId,
-  lobbyId,
   setPlayers,
-  players,
-  peer,
-  setPeer,
   PlayerName,
+  setPlayerId,
 }) {
   const [inputLobby, setInputLobby] = useState("");
   const [isConnecting, setIsConnecting] = useState(false);
-  const [isConnected, setIsConnected] = useState(false);
 
-  function connectToLobby() {
+  function joinLobby(lobbyCode) {
     if (!inputLobby || isConnecting) return;
-    setIsConnecting(true);
 
-    const peerInstance = new Peer({
-      host: "0.peerjs.com",
-      port: 443,
-      secure: true,
-      pingInterval: 5000, // Częstsze pingi
-      config: {
-        iceServers: [
-          { urls: "stun:stun.relay.metered.ca:80" }, // Bardziej niezawodny STUN
-          { urls: "stun:stun.l.google.com:19302" },
-          {
-            urls: "turn:a.relay.metered.ca:443",
-            username: "14b3f408a14d5e03d1b374bb", // DARMOWE konto (limit 50 GB/miesiąc)
-            credential: "7GZq87m80VnXQfYj",
-          },
-        ],
-        iceTransportPolicy: "relay", // Próbuj zarówno P2P jak i TURN
-      },
-    });
+    const lobbyRef = ref(db, `lobbies/${lobbyCode}`);
 
-    peerInstance.on("open", (id) => {
-      const conn = peerInstance.connect(inputLobby, {
-        reliable: true, // Lepsza niezawodność
-      });
+    get(lobbyRef).then((snapshot) => {
+      if (!snapshot.exists()) {
+        alert("Lobby does not exist");
+        setIsConnecting(false);
+        return;
+      }
 
-      conn.on("open", () => {
-        console.log("Połączenie z hostem otwarte!");
-        conn.send({ type: "player-joined", PlayerName: PlayerName });
-        setLobbyId(inputLobby);
+      const playerId = "player_" + Date.now();
+      setPlayerId(playerId);
+
+      const newPlayer = {
+        id: playerId,
+        name: PlayerName || "Player",
+        isHost: false,
+      };
+
+      update(ref(db, `lobbies/${lobbyCode}/players`), {
+        [playerId]: newPlayer,
+      }).then(() => {
+        setPlayers((prev) => ({ ...prev, [playerId]: newPlayer }));
         setGameState("lobby");
       });
     });
 
-    peerInstance.on("error", (err) => {
-      console.error("Błąd PeerJS:", err);
-      setIsConnecting(false);
-    });
+    setIsConnecting(false);
+  }
 
-    setPeer(peerInstance);
+  function performConnect() {
+    setLobbyId(inputLobby);
+    setIsConnecting(true);
+    joinLobby(inputLobby);
   }
 
   return (
@@ -73,23 +64,23 @@ function Connect({
       <div className="inputLobbyIDContainer">
         {!isConnecting && (
           <div className="inputLobbyID">
-            <input
-              type="text"
-              className="lobbyIDInput"
-              placeholder="Kod gry"
-              maxLength={6}
-              onChange={(e) => {
-                setInputLobby(e.target.value);
-              }}
-            />
-            <div
-              className="joinButton"
-              onClick={() => {
-                setLobbyId(inputLobby);
-                setIsConnecting(true);
-                connectToLobby();
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                performConnect();
               }}
             >
+              <input
+                type="text"
+                className="lobbyIDInput"
+                placeholder="Kod gry"
+                maxLength={6}
+                onChange={(e) => {
+                  setInputLobby(e.target.value);
+                }}
+              />
+            </form>
+            <div className="joinButton" onClick={performConnect}>
               <IoMdCheckmark />
             </div>
           </div>

@@ -5,36 +5,37 @@ import { IoMdCheckmark } from "react-icons/io";
 function PlayerName({ setPlayerName, setGameState }) {
   const [inputName, setInputName] = React.useState("");
 
+  function saveUsername() {
+    if (inputName.length < 3) {
+      alert("Nazwa jest za krótka");
+      return;
+    }
+    setPlayerName(inputName);
+    setGameState("menu");
+  }
+
   return (
     <div className="connect">
-      <div
-        className="logo"
-        onClick={() => {
-          setGameState("menu");
-        }}
-      ></div>
+      <div className="logo"></div>
       <div className="inputLobbyIDContainer">
         <div className="inputLobbyID">
-          <input
-            type="text"
-            className="lobbyIDInput"
-            placeholder="Wybierz nazwę"
-            maxLength={12}
-            onChange={(e) => {
-              setInputName(e.target.value);
-            }}
-          />
-          <div
-            className="joinButton"
-            onClick={() => {
-              if (inputName.length < 3) {
-                alert("Nazwa jest za krótka");
-                return;
-              }
-              setPlayerName(inputName);
-              setGameState("menu");
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              saveUsername();
             }}
           >
+            <input
+              type="text"
+              className="lobbyIDInput"
+              placeholder="Wybierz nazwę"
+              maxLength={12}
+              onChange={(e) => {
+                setInputName(e.target.value);
+              }}
+            />
+          </form>
+          <div className="joinButton" onClick={saveUsername}>
             <IoMdCheckmark />
           </div>
         </div>

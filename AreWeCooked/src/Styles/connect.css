@@ -14,7 +14,7 @@
 .inputLobbyID {
   margin-top: -15vh;
   width: 20vw;
-  height: 7.5vh;
+  height: 4vw;
   background-color: #cd16ca;
   border-radius: 0.7vw;
 
@@ -25,7 +25,7 @@
 .lobbyIDInput {
   z-index: 111;
   width: 16vw;
-  height: 5.5vh;
+  height: 3vw;
   border-radius: 0.5vw;
 
   border: none;
@@ -46,12 +46,12 @@
   }
 }
 .joinButton {
-  height: 5.5vh;
-  width: 5.5vh;
+  height: 3vw;
+  width: 3vw;
   border-radius: 0.5vw;
   background-color: #45ad00;
 
-  font-size: 5vh;
+  font-size: 4vw;
   text-align: center;
 
   display: flex;

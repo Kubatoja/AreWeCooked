@@ -1,153 +1,87 @@
 import React, { use } from "react";
 import { useEffect, useState } from "react";
 import "../Styles/lobby.css";
-import Peer from "peerjs";
+
+import { ref, onValue, off, onDisconnect, remove } from "firebase/database";
+import { db } from "./firebase";
 
 function Lobby({
   setGameState,
   lobbyId,
-  setLobbyId,
   isHost,
   setPlayers,
   players,
-  peer,
-  setPeer,
-  PlayerName,
+  playerId,
 }) {
-  const updatePlayersForAll = (playersList) => {
-    if (!peer) return;
+  useEffect(() => {
+    const playersRef = ref(db, `lobbies/${lobbyId}/players`);
+    const lobbyRef = ref(db, `lobbies/${lobbyId}`);
 
-    console.log("Updating players for all connections:", playersList);
-    Object.values(peer.connections).forEach((conns) => {
-      conns.forEach((conn) => {
-        if (conn.open) {
-          conn.send({ type: "update-players", players: playersList });
-        }
-      });
+    const playersUnsubscribe = onValue(playersRef, (snapshot) => {
+      const players = snapshot.val();
+      if (players) {
+        setPlayers(players);
+      }
     });
-  };
 
-  useEffect(() => {
-    if (isHost) {
-      setPlayers([{ id: "host", name: PlayerName, isHost: true }]);
-      const peerInstance = new Peer(lobbyId, {
-        host: "0.peerjs.com",
-        port: 443,
-        secure: true,
-        pingInterval: 5000, // Częstsze pingi
-        config: {
-          iceServers: [
-            { urls: "stun:stun.relay.metered.ca:80" }, // Bardziej niezawodny STUN
-            { urls: "stun:stun.l.google.com:19302" },
-            {
-              urls: "turn:a.relay.metered.ca:443",
-              username: "14b3f408a14d5e03d1b374bb", // DARMOWE konto (limit 50 GB/miesiąc)
-              credential: "7GZq87m80VnXQfYj",
-            },
-          ],
-          iceTransportPolicy: "relay", // Próbuj zarówno P2P jak i TURN
-        },
-      });
-
-      peerInstance.on("connection", (conn) => {
-        conn.on("data", (data) => {
-          if (data.type === "player-joined") {
-            console.log("Player joined:", data.PlayerName);
-            setPlayers((prevPlayers) => [
-              ...prevPlayers,
-              { id: conn.peer, name: data.PlayerName, isHost: false },
-            ]);
-          }
-        });
-      });
-
-      setPeer(peerInstance);
-      return () => {
-        peerInstance.destroy();
-      };
-    }
-  }, [isHost, lobbyId]);
-
-  useEffect(() => {
-    if (isHost && peer) {
-      updatePlayersForAll(players);
-    }
-  }, [players, isHost, peer]);
-
-  useEffect(() => {
-    if (!isHost && peer) {
-      // Nasłuchuj wszystkie aktywne połączenia
-      Object.values(peer.connections).forEach((conns) => {
-        conns.forEach((conn) => {
-          conn.on("data", (data) => {
-            if (data.type === "update-players") {
-              console.log("Otrzymano nową listę graczy:", data.players);
-              setPlayers(data.players);
-            }
-          });
-        });
-      });
-
-      // Obsługa nowych połączeń (jeśli klient sam nawiązuje połączenia)
-      peer.on("connection", (conn) => {
-        conn.on("data", (data) => {
-          if (data.type === "update-players") {
-            setPlayers(data.players);
-          }
-        });
-      });
-    }
-  }, [peer, isHost]);
-
-  useEffect(() => {
-    if (isHost && peer) {
-      // Nasłuchuj nowych połączeń
-      peer.on("connection", (conn) => {
-        conn.on("close", () => {
-          console.log(`Gracz ${conn.peer} opuścił lobby`); //!!!!!!!!!
-          setPlayers((prev) => prev.filter((p) => p.id !== conn.peer));
-        });
-      });
-    }
-  }, [isHost, peer]);
-
-  useEffect(() => {
-    if (!isHost && peer) {
-      const connectionChecker = setInterval(() => {
-        const isConnected = Object.values(peer.connections)
-          .flat()
-          .some((conn) => conn.open);
-
-        if (!isConnected) {
-          alert("Connection lost - host disconnected");
-          setGameState("menu");
-          clearInterval(connectionChecker);
+    const lobbyUnsubscribe = onValue(lobbyRef, (snapshot) => {
+      if (!snapshot.exists()) {
+        if (!isHost) {
+          alert("Lobby zostało zamknięte przez hosta");
         }
-      }, 5000); // Sprawdzaj co 5 sekund
+        setPlayers([]);
+        setGameState("menu");
+      }
+    });
 
-      return () => clearInterval(connectionChecker);
+    if (playerId) {
+      const playerRef = ref(db, `lobbies/${lobbyId}/players/${playerId}`);
+      onDisconnect(playerRef).remove();
+
+      if (isHost) {
+        onDisconnect(lobbyRef).remove();
+      }
     }
-  }, [peer, isHost]);
+
+    return () => {
+      off(playersRef);
+      off(lobbyRef);
+      playersUnsubscribe?.();
+      lobbyUnsubscribe?.();
+    };
+  }, [lobbyId, playerId]);
+
+  function handleLeaveLobby() {
+    if (!lobbyId || !playerId) return;
+
+    const playerRef = ref(db, `lobbies/${lobbyId}/players/${playerId}`);
+    const lobbyRef = ref(db, `lobbies/${lobbyId}`);
+
+    if (isHost) {
+      remove(lobbyRef).then(() => {
+        setPlayers([]);
+        setGameState("menu");
+      });
+    } else {
+      remove(playerRef).then(() => {
+        setPlayers([]);
+        setGameState("menu");
+      });
+    }
+  }
 
   return (
     <div className="Lobby">
-      <div
-        className="logoCorner"
-        onClick={() => {
-          if (peer) peer.destroy();
-          setLobbyId("000000");
-          setPlayers([]);
-          setGameState("menu");
-        }}
-      ></div>
+      <div className="logoCorner" onClick={handleLeaveLobby}></div>
       <div className="lobbyIDText">
         <p>Kod gry:</p>
         <div className="lobbyID">{lobbyId}</div>
       </div>
       <div className="players">
-        {players.map((player) => (
-          <Player key={player.id} name={player.name} Host={player.isHost} />
-        ))}
+        {players &&
+          Object.values(players).map((player) => (
+            <Player key={player.id} name={player.name} Host={player.isHost} />
+          ))}
       </div>
     </div>
   );

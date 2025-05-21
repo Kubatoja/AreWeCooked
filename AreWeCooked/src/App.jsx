@@ -13,15 +13,12 @@ function App() {
   const [lobbyId, setLobbyId] = useState("000000");
   const [isHost, setIsHost] = useState(false);
   const [players, setPlayers] = useState([]);
-  const [peer, setPeer] = useState(null);
+  const [playerId, setPlayerId] = useState("");
 
   useEffect(() => {
     console.log(`Lobby ID: ${lobbyId}`);
   }, [lobbyId]);
 
-  useEffect(() => {
-    console.log(peer);
-  }, [peer]);
   return (
     <>
       <div>
@@ -33,24 +30,24 @@ function App() {
             setPlayerName={setPlayerName}
           />
         )}
+
         {gameState == "menu" && (
           <MainMenu
+            playerName={playerName}
             setGameState={setGameState}
             setLobbyId={setLobbyId}
             setIsHost={setIsHost}
+            setPlayerId={setPlayerId}
           />
         )}
         {gameState == "lobby" && (
           <Lobby
             setGameState={setGameState}
             lobbyId={lobbyId}
-            setLobbyId={setLobbyId}
             isHost={isHost}
             players={players}
             setPlayers={setPlayers}
-            peer={peer}
-            setPeer={setPeer}
-            PlayerName={playerName}
+            playerId={playerId}
           />
         )}
         {gameState == "connect" && (
@@ -58,11 +55,8 @@ function App() {
             setLobbyId={setLobbyId}
             setGameState={setGameState}
             setPlayers={setPlayers}
-            setPeer={setPeer}
-            players={players}
-            peer={peer}
-            lobbyId={lobbyId}
             PlayerName={playerName}
+            setPlayerId={setPlayerId}
           />
         )}
       </div>
